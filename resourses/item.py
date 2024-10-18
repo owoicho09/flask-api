@@ -31,8 +31,12 @@ class Item(MethodView):
             abort(401, message="Admin privilege required.")
 
         item = ItemModel.query.get_or_404(item_id)
-        db.session.delete(item)
-        db.session.commit()
+        try:
+            db.session.delete(item)
+            db.session.commit()
+
+        except SQLAlchemyError:
+            abort(500, message="An error occurred while inserting the item.")
 
         return {"message": "Item deleted."}
 
